@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(@RequestBody User user) {
-        boolean success = userService.login(user.getUsername(), user.getPasswordHash());
+        boolean success = userService.login(user.getUsername(), user.getPassword());
         return success ? "Login success" : "Login failed";
     }
 }
