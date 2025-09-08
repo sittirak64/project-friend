@@ -7,6 +7,7 @@ import com.example.demo.repository.UserRepository;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -14,20 +15,23 @@ public class UserService {
     }
 
     public String register(User user) {
-        if(userRepository.findByUsername(user.getUsername()).isPresent()) {
+        // ตรวจสอบ username ซ้ำ
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "Username already exists";
         }
-        if(userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return "Email already exists";
+
+        // กำหนด role default เป็น "user" หากไม่ได้ส่งมา
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("user");
         }
-        // TODO: Hash password ก่อนบันทึก
+
+        // บันทึกรหัสผ่าน plain text
         userRepository.save(user);
         return "Register success";
     }
 
-    public boolean login(String username, String passwordHash) {
+    public boolean login(String username, String password) {
         Optional<User> user = userRepository.findByUsername(username);
-        return user.isPresent() && user.get().getPasswordHash().equals(passwordHash);
+        return user.isPresent() && user.get().getPassword().equals(password);
     }
 }
-
